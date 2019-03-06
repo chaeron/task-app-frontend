@@ -38,10 +38,11 @@
 
         this.$store.dispatch('login', {email, password})
           .then((res) => {
-            this.$router.push('/dashboard');
+		    console.log( "push to dashboard" );
+			this.$router.push('/dashboard');
           })
           .catch(error => {
-            this.errors.push(error)
+		    this.errors.push(error)
           });
       }
     }

@@ -13,17 +13,17 @@ export const store = new Vuex.Store({
     tasks: [],
   },
   mutations: {
-    authenticate(state, token, user){
-      state.token = token;
-      state.user  = user;
+    authenticate(state, data){
+      state.token = data.token;
+      state.user  = data.user;
 
-      localStorage.set(constants.LOCALSTORAGE_TOKEN_KEY, token);
+	  localStorage.setItem(constants.LOCALSTORAGE_TOKEN_KEY, data.token);
     },
     logout(state){
       state.token = null;
       state.user  = {};
 
-      localStorage.set(constants.LOCALSTORAGE_TOKEN_KEY, '');
+      localStorage.setItem(constants.LOCALSTORAGE_TOKEN_KEY, '');
     },
     SET_TASKS(state, tasks) {
       state.tasks = tasks;
@@ -49,16 +49,22 @@ export const store = new Vuex.Store({
     },
     async login(context, payload) {
       try {
-        const loginResponse   = await axios.post('/api/login', payload);
+		const loginResponse   = await axios.post('/api/login', payload);
         const { token, user } = loginResponse.data;
 
-        context.commit('authenticate', token, user);
+		context.commit('authenticate', { token, user } );
 
         return Promise.resolve();
 
       } catch (error) {
         return Promise.reject(_.get(error.response, 'data.message'));
       }
+    },
+	async logout(context, payload) { 
+		context.commit('logout');
+
+        return Promise.resolve();
+     
     },
     async getTaskList({ commit }) {
       axios.get('/api/tasks')

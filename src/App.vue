@@ -10,8 +10,8 @@
       </div>
 
       <div class='form-inline ml-auto' v-if='isLoggedIn'>
-        <p>{{ user.email }}</p>
-        <span v-if="isLoggedIn"> | <a @click="logout">Logout</a></span>
+        <p>{{ email }}
+        <span v-if="isLoggedIn"> | <a @click="logout">Logout</a></span></p>
       </div>
 
     </nav>
@@ -26,7 +26,10 @@ export default {
   computed: {
     isLoggedIn(){ 
       return this.$store.getters.isLoggedIn;
-    }
+    },
+	email() {
+	  return this.$store.state.user.email;
+	}
   },
   data(){
     return {}

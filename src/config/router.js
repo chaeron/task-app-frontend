@@ -6,15 +6,16 @@ import ConfirmationPage from '../pages/Confirmation'
 import LoginPage from '../pages/Login'
 import DashboardPage from '../pages/Dashboard'
 import { store } from '../store'
+import { constants } from '../config/constants'
 
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: TaskListPage
+		path: '/',
+		name: 'home',
+		component: TaskListPage
     },
     {
     	path: '/register',
@@ -22,9 +23,9 @@ export const router = new VueRouter({
     	component: RegisterPage
     },
     {
-      path: '/confirmation',
-      name: 'confirmation',
-      component: ConfirmationPage
+		path: '/confirmation',
+		name: 'confirmation',
+		component: ConfirmationPage
     },
     {
     	path: '/login',
@@ -32,46 +33,28 @@ export const router = new VueRouter({
     	component: LoginPage
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardPage,
-      meta: {
-        requiresAuth: true
-      }
+		path: '/dashboard',
+		name: 'dashboard',
+		component: DashboardPage,
+		meta: {
+			requiresAuth: true
+		}
     }
   ]
 });
 
 
-// todo: clean this shit up
 router.beforeEach((to, from, next) => {
-    if(to.matched.some(record => record.meta.requiresAuth)) {
-        if (localStorage.getItem('jwt') == null) {
-            next({
+	if(to.matched.some(record => record.meta.requiresAuth)) {
+        if (localStorage.getItem( constants.LOCALSTORAGE_TOKEN_KEY ) == null) {
+			next({
                 path: '/login',
                 params: { nextUrl: to.fullPath }
             })
-        } else {
-            let user = JSON.parse(localStorage.getItem('user'))
-            if(to.matched.some(record => record.meta.is_admin)) {
-                if(user.is_admin == 1){
-                    next()
-                }
-                else{
-                    next({ name: 'userboard'})
-                }
-            }else {
-                next()
-            }
-        }
-    } else if(to.matched.some(record => record.meta.guest)) {
-        if(localStorage.getItem('jwt') == null){
+        } else {         
             next()
         }
-        else{
-            next({ name: 'userboard'})
-        }
-    }else {
+    } else {
         next() 
     }
 });
